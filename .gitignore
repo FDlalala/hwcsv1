@@ -1,0 +1,18 @@
+# 模型文件（太大，不上传）
+rag/bge-small-zh-v1.5/
+
+# 向量数据库
+rag/chroma_web/
+rag/chroma_cases/
+
+# 压缩包
+rag/ollama.tar.gz
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# 评估结果图片（可选，按需保留）
+# rag/eval_results_v2/
+# rag/eval_results_local_v2/
