@@ -17,11 +17,20 @@ from rag_agent_local import agent, vectordb, RETRIEVE_K, _last_retrieved_docs as
 import rag_agent_local as rag_module
 
 # ========== 流式问答核心函数 ==========
+def _extract_text(content) -> str:
+    """兼容 Gradio 6.x 将 content 包装成 [text, None] 列表的情况"""
+    if isinstance(content, list):
+        # Gradio 内部格式: [text_or_none, file_or_none]
+        return str(content[0]) if content and content[0] is not None else ""
+    return str(content) if content is not None else ""
+
+
 def chat_stream(user_message: str, history: list):
     """
     流式生成回答，同时收集检索来源。
     history 格式：[{"role": "user"/"assistant", "content": "..."}]
     """
+    user_message = _extract_text(user_message)
     if not user_message.strip():
         return
 
@@ -33,7 +42,7 @@ def chat_stream(user_message: str, history: list):
     messages = []
     for msg in history:
         role = msg.get("role", "")
-        content = msg.get("content", "") or ""
+        content = _extract_text(msg.get("content", ""))
         if role == "user" and content:
             messages.append(HumanMessage(content=content))
         elif role == "assistant" and content and "⏳" not in content:
@@ -189,7 +198,7 @@ def build_ui():
                 yield history, sources, format_sources_html(sources)
                 return
 
-            user_msg = history[-1]["content"]
+            user_msg = _extract_text(history[-1]["content"])
             # 去掉最后一条（用户消息），传入历史
             prev_history = history[:-1]
 
