@@ -7,6 +7,9 @@ app.py —— 基于 Gradio 的 RAG Agent 可视化交互界面
     # 或指定端口
     python app.py --port 7860
 """
+import os
+# 禁用 tokenizers 并行，避免在 nohup/非 tty 环境下 fork 子进程时死锁
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 import argparse
 import gradio as gr
